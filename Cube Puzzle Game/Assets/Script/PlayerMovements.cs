@@ -5,12 +5,15 @@ using UnityEngine;
 public class PlayerMovements : MonoBehaviour
 {
     public GameObject Player;
-    public GameObject Center;
+    public GameObject Center , CenterInside;
     public GameObject Up , Down , left , Right;
     public float speed;
     public int step = 9;
     public bool isInputRestricted = true;
     public Rigidbody NewCubePrefab;
+    public PlayerTriggerControl UpSide, DownSide, LeftSide , RightSide;
+    private bool UpMove, DownMove , LeftMove , RightMove ;
+   
 
     [Header("----- Touch control ------")]
     private float SWIPE_THRESHOLD = 50f;
@@ -19,6 +22,13 @@ public class PlayerMovements : MonoBehaviour
     public bool isTouch;
     Vector3 position;
     public float amountOfY;
+    private float[] force = { 10, -10 };
+    private int i = 0;
+
+
+    [Header("-----Level Win Control-------")]
+    public PlayerMovements[] Players;
+    public int FirstNumber, SecondNumber;
     
 
     void Start()
@@ -33,12 +43,38 @@ public class PlayerMovements : MonoBehaviour
 
         NewCubePrefab = Resources.Load<Rigidbody>("New Cube");
 
+        Players = GameObject.FindObjectsOfType<PlayerMovements>();
+
         if(PlayerPrefs.GetFloat("AmountOfYaxis") == 0)
         {
             PlayerPrefs.SetFloat("AmountOfYaxis", 13.5f);
         }
 
         amountOfY = PlayerPrefs.GetFloat("AmountOfYaxis");
+
+        for(int Number = 0; Number < Players.Length; Number++)
+        {
+            if (gameObject.name == "cube(" + Number + ")")
+            {
+                if(Number == 0)
+                {
+                    FirstNumber = Number + 1;
+                    SecondNumber = Number + 1;
+                }
+                else if(Number == Players.Length - 1)
+                {
+                    FirstNumber = Number - 2;
+                    SecondNumber = Number - 2;
+                    
+                }else
+                {
+                    FirstNumber = Number - 1;
+                    SecondNumber = Number + 1;
+                }
+
+            }
+        }
+
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -57,7 +93,7 @@ public class PlayerMovements : MonoBehaviour
                 if(gameObject.name == "New Cube(Clone)")
                 {
                     position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2 + amountOfY, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
-                    PlayerPrefs.SetFloat("AmountOfYaxis", amountOfY + 10.5f);
+                    PlayerPrefs.SetFloat("AmountOfYaxis", amountOfY + 5.5f);
                 }
                 else
                 {
@@ -65,6 +101,11 @@ public class PlayerMovements : MonoBehaviour
 
                 }
 
+                if (collision.gameObject.name == "New Cube(Clone)")
+                {
+                    position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2 - amountOfY, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
+                   
+                }
 
                 Rigidbody clone = Instantiate(NewCubePrefab, position, Quaternion.identity);
 
@@ -89,26 +130,59 @@ public class PlayerMovements : MonoBehaviour
 
                 if (Input.GetKeyDown(KeyCode.UpArrow))
                 {
-                    StartCoroutine("RotationUp");
-                    isInputRestricted = false;
+                    if (UpSide.PlayerMove == false)
+                    {
+                        UpMove = true;
+                    }
+                    else
+                    {
+                        StartCoroutine("RotationUp");
+                        isInputRestricted = false;
+                    }
+                   
                 }
 
                 if (Input.GetKeyDown(KeyCode.DownArrow))
                 {
-                    StartCoroutine("RotationDown");
-                    isInputRestricted = false;
+                    if (DownSide.PlayerMove == false)
+                    {
+                        DownMove = true;
+                    }
+                    else
+                    {
+                        StartCoroutine("RotationDown");
+                        isInputRestricted = false;
+                    }
+                 
                 }
 
                 if (Input.GetKeyDown(KeyCode.RightArrow))
                 {
-                    StartCoroutine("RotationRight");
-                    isInputRestricted = false;
+                    if (RightSide.PlayerMove == false)
+                    {
+                        RightMove = true;
+                    }
+                    else
+                    {
+                        StartCoroutine("RotationRight");
+                        isInputRestricted = false;
+                    }
+
+                    
                 }
 
                 if (Input.GetKeyDown(KeyCode.LeftArrow))
                 {
-                    StartCoroutine("RotationLeft");
-                    isInputRestricted = false;
+                    if(LeftSide.PlayerMove == false)
+                    {
+                        LeftMove = true;
+                    }
+                    else
+                    {
+                        StartCoroutine("RotationLeft");
+                        isInputRestricted = false;
+                    }
+                    
                 }
             }
 
@@ -119,6 +193,62 @@ public class PlayerMovements : MonoBehaviour
             if (isInputRestricted == true)
             {
                 HandleInput();
+            }
+        }
+
+        if (UpMove == true)
+        {
+            if (UpSide.PlayerMove == false)
+            {
+                transform.Translate(0, force[i], 0);
+            }
+            else
+            {
+                StartCoroutine("RotationUp");
+                isInputRestricted = false;
+                UpMove = false;
+            }
+        }
+
+        if (DownMove == true)
+        {
+            if (DownSide.PlayerMove == false)
+            {
+                transform.Translate(0, force[i], 0);
+            }
+            else
+            {
+                StartCoroutine("RotationDown");
+                isInputRestricted = false;
+                DownMove = false;
+            }
+        }
+
+        if (LeftMove == true)
+        {
+            if(LeftSide.PlayerMove == false)
+            {
+                transform.Translate(0, force[i], 0);
+            }
+            else
+            {
+                StartCoroutine("RotationLeft");
+                isInputRestricted = false;
+                LeftMove = false;
+            }
+        }
+
+        if (RightMove == true)
+        {
+            if (RightSide.PlayerMove == false)
+            {
+                transform.Translate(0, force[i], 0);
+            }
+            else
+            {
+                StartCoroutine("RotationRight");
+                isInputRestricted = false;
+                RightMove = false;
             }
         }
     }
@@ -217,7 +347,13 @@ public class PlayerMovements : MonoBehaviour
             yield return new WaitForSeconds(speed);
         }
         Center.transform.position = Player.transform.position;
+        CenterInside.transform.rotation = new Quaternion(0, 0, 0, -180);
         isInputRestricted = true;
+
+        if (i == 0)
+            i = 1;
+        else
+            i = 0;
       
     }
 
@@ -229,8 +365,12 @@ public class PlayerMovements : MonoBehaviour
             yield return new WaitForSeconds(speed);
         }
         Center.transform.position = Player.transform.position;
+        CenterInside.transform.rotation = new Quaternion(0, 0, 0 , 180);
         isInputRestricted = true;
-        
+        if (i == 0)
+            i = 1;
+        else
+            i = 0;
     }
 
     IEnumerator RotationLeft()
@@ -241,8 +381,12 @@ public class PlayerMovements : MonoBehaviour
             yield return new WaitForSeconds(speed);
         }
         Center.transform.position = Player.transform.position;
+        CenterInside.transform.rotation = new Quaternion(0, 0, 0, 90);
         isInputRestricted = true;
-        
+        if (i == 0)
+            i = 1;
+        else
+            i = 0;
     }
 
     IEnumerator RotationRight()
@@ -253,8 +397,12 @@ public class PlayerMovements : MonoBehaviour
             yield return new WaitForSeconds(speed);
         }
         Center.transform.position = Player.transform.position;
+        CenterInside.transform.rotation = new Quaternion(0, 0, 0, -90);
         isInputRestricted = true;
-       
+        if (i == 0)
+            i = 1;
+        else
+            i = 0;
     }
 
 
