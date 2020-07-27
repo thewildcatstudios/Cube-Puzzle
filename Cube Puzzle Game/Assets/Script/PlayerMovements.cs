@@ -13,6 +13,7 @@ public class PlayerMovements : MonoBehaviour
     public Rigidbody NewCubePrefab;
     public PlayerTriggerControl UpSide, DownSide, LeftSide , RightSide;
     private bool UpMove, DownMove , LeftMove , RightMove ;
+
    
 
     [Header("----- Touch control ------")]
@@ -26,9 +27,10 @@ public class PlayerMovements : MonoBehaviour
     private int i = 0;
 
 
+
     [Header("-----Level Win Control-------")]
     public PlayerMovements[] Players;
-    public int FirstNumber, SecondNumber;
+    public int FirstNumber, SecondNumber , CubesCountsNumber;
     
 
     void Start()
@@ -54,24 +56,25 @@ public class PlayerMovements : MonoBehaviour
 
         for(int Number = 0; Number < Players.Length; Number++)
         {
-            if (gameObject.name == "cube(" + Number + ")")
+            if (gameObject.name == "Cube(" + Number + ")")
             {
-                if(Number == 0)
-                {
-                    FirstNumber = Number + 1;
-                    SecondNumber = Number + 1;
-                }
-                else if(Number == Players.Length - 1)
-                {
-                    FirstNumber = Number - 2;
-                    SecondNumber = Number - 2;
+                //if(Number == 0)
+                //{
+                //    FirstNumber = Number + 1;
+                //    SecondNumber = Number + 1;
+                //}
+                //else if(Number == Players.Length - 1)
+                //{
+                //    FirstNumber = Number - 1;
+                //    SecondNumber = Number - 1;
                     
-                }else
-                {
+                //}else
+                //{
                     FirstNumber = Number - 1;
                     SecondNumber = Number + 1;
-                }
+                //}
 
+                CubesCountsNumber = Number;
             }
         }
 
@@ -81,16 +84,23 @@ public class PlayerMovements : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Cube"))
         {
-            if(isTouch == true)
+            isInputRestricted = true;
+            if (isTouch == true)
             {
+                PlayerPrefs.SetInt("CollosonCounter", PlayerPrefs.GetInt("CollosonCounter") + 1);
                 Vector3 colliderSize = new Vector3(100, collision.gameObject.GetComponent<BoxCollider>().size.y + gameObject.GetComponent<BoxCollider>().size.y, 100);
+
 
                 Destroy(gameObject.GetComponent<Rigidbody>());
                 Destroy(collision.gameObject.GetComponent<Rigidbody>());
                 Destroy(gameObject.GetComponent<BoxCollider>());
                 Destroy(collision.gameObject.GetComponent<BoxCollider>());
 
-                if(gameObject.name == "New Cube(Clone)")
+
+               // position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
+
+
+                if (gameObject.name == "New Cube(Clone)")
                 {
                     position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2 + amountOfY, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
                     PlayerPrefs.SetFloat("AmountOfYaxis", amountOfY + 5.5f);
@@ -104,7 +114,13 @@ public class PlayerMovements : MonoBehaviour
                 if (collision.gameObject.name == "New Cube(Clone)")
                 {
                     position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2 - amountOfY, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
-                   
+
+                }
+
+                if (gameObject.name == "New Cube(Clone)" && collision.gameObject.name == collision.gameObject.name)
+                {
+                    position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
+
                 }
 
                 Rigidbody clone = Instantiate(NewCubePrefab, position, Quaternion.identity);
@@ -114,8 +130,83 @@ public class PlayerMovements : MonoBehaviour
                 collision.gameObject.transform.parent = clone.transform;
                 gameObject.transform.parent = clone.transform;
 
+
                 
+
+                if (collision.gameObject.name == "Cube(" + FirstNumber + ")" || collision.gameObject.name == "Cube(" + SecondNumber + ")")
+                {
+                    PlayerPrefs.SetInt("Cube(" + collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber + ")", 1);
+                    clone.GetComponent<PlayerMovements>().CubesCountsNumber = CubesCountsNumber;
+
+                    for (int i = 0; i< PlayerPrefs.GetInt("NumberOfCubesInLevel"); i++)
+                    {
+                        if(collision.gameObject.name == "Cube(" + i + ")")
+                        {
+                            if(i > CubesCountsNumber)
+                            {
+                                clone.GetComponent<PlayerMovements>().FirstNumber = FirstNumber;
+                                clone.GetComponent<PlayerMovements>().SecondNumber = collision.gameObject.GetComponent<PlayerMovements>().SecondNumber;
+
+                            }
+                            else
+                            {
+                                clone.GetComponent<PlayerMovements>().FirstNumber = collision.gameObject.GetComponent<PlayerMovements>().FirstNumber;
+                                clone.GetComponent<PlayerMovements>().SecondNumber = SecondNumber;
+
+                            }
+                        }
+                    }
+                }
+
+                if (collision.gameObject.name == "New Cube(Clone)")
+                {
+                    if(FirstNumber == collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber)
+                    {
+                        PlayerPrefs.SetInt("Cube(" + collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber + ")", 1);
+                        clone.GetComponent<PlayerMovements>().CubesCountsNumber = CubesCountsNumber;
+                    }
+
+                    if (SecondNumber == collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber)
+                    {
+                        PlayerPrefs.SetInt("Cube(" + collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber + ")", 1);
+                        clone.GetComponent<PlayerMovements>().CubesCountsNumber = CubesCountsNumber;
+                    }
+
+                    for (int i = 0; i < PlayerPrefs.GetInt("NumberOfCubesInLevel"); i++)
+                    {
+                        if (i == collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber)
+                        {
+                            if (i > CubesCountsNumber)
+                            {
+                                clone.GetComponent<PlayerMovements>().FirstNumber = FirstNumber;
+                                clone.GetComponent<PlayerMovements>().SecondNumber = collision.gameObject.GetComponent<PlayerMovements>().SecondNumber;
+
+                            }
+                            else
+                            {
+                                clone.GetComponent<PlayerMovements>().FirstNumber = collision.gameObject.GetComponent<PlayerMovements>().FirstNumber;
+                                clone.GetComponent<PlayerMovements>().SecondNumber = SecondNumber;
+
+                            }
+                        }
+                    }
+                }
+
+                //if (collision.gameObject.name == "Cube(" + SecondNumber + ")")
+                //{
+                //    PlayerPrefs.SetInt("Cube(" + CubesCountsNumber + ")", 1);
+                //    clone.GetComponent<PlayerMovements>().FirstNumber = collision.gameObject.GetComponent<PlayerMovements>().FirstNumber;
+                //    clone.GetComponent<PlayerMovements>().SecondNumber = SecondNumber;
+
+                //}
+
+             
             }
+        }
+
+        if(collision.gameObject.CompareTag("Platfrom"))
+        {
+            isInputRestricted = true;
         }
     }
 
@@ -126,7 +217,19 @@ public class PlayerMovements : MonoBehaviour
         {
             if (isTouch == true)
             {
-                Center.transform.position = Player.transform.position;
+                if(gameObject.name == "New Cube(Clone)")
+                {
+                    if(gameObject.transform.position.y < 30 && gameObject.transform.position.y > 25)
+                    {
+                        Center.transform.position = new Vector3(Player.transform.position.x, Player.transform.position.y + 27.1f, Player.transform.position.z);
+                    }
+                }
+                else
+                {
+                    Center.transform.position = Player.transform.position;
+                }
+
+                
 
                 if (Input.GetKeyDown(KeyCode.UpArrow))
                 {
@@ -300,13 +403,27 @@ public class PlayerMovements : MonoBehaviour
         {
             if ((double)this.endTouch.y - (double)this.startTouch.y > 0.0)
             {
-                this.StartCoroutine("RotationUp");
-                isInputRestricted = false;
+                if (UpSide.PlayerMove == false)
+                {
+                    UpMove = true;
+                }
+                else
+                {
+                    StartCoroutine("RotationUp");
+                    isInputRestricted = false;
+                }
             }
             else if ((double)this.endTouch.y - (double)this.startTouch.y < 0.0)
             {
-                this.StartCoroutine("RotationDown");
-                isInputRestricted = false;
+                if (DownSide.PlayerMove == false)
+                {
+                    DownMove = true;
+                }
+                else
+                {
+                    StartCoroutine("RotationDown");
+                    isInputRestricted = false;
+                }
             }
             this.startTouch = this.endTouch;
         }
@@ -316,13 +433,27 @@ public class PlayerMovements : MonoBehaviour
                 return;
             if ((double)this.endTouch.x - (double)this.startTouch.x > 0.0)
             {
-                this.StartCoroutine("RotationRight");
-                isInputRestricted = false;
+                if (RightSide.PlayerMove == false)
+                {
+                    RightMove = true;
+                }
+                else
+                {
+                    StartCoroutine("RotationRight");
+                    isInputRestricted = false;
+                }
             }
             else if ((double)this.endTouch.x - (double)this.startTouch.x < 0.0)
             {
-                this.StartCoroutine("RotationLeft");
-                isInputRestricted = false;
+                if (LeftSide.PlayerMove == false)
+                {
+                    LeftMove = true;
+                }
+                else
+                {
+                    StartCoroutine("RotationLeft");
+                    isInputRestricted = false;
+                }
             }
             this.startTouch = this.endTouch;
         }
@@ -348,12 +479,14 @@ public class PlayerMovements : MonoBehaviour
         }
         Center.transform.position = Player.transform.position;
         CenterInside.transform.rotation = new Quaternion(0, 0, 0, -180);
-        isInputRestricted = true;
+        //isInputRestricted = true;
 
         if (i == 0)
             i = 1;
         else
             i = 0;
+
+
       
     }
 
@@ -366,7 +499,7 @@ public class PlayerMovements : MonoBehaviour
         }
         Center.transform.position = Player.transform.position;
         CenterInside.transform.rotation = new Quaternion(0, 0, 0 , 180);
-        isInputRestricted = true;
+        //isInputRestricted = true;
         if (i == 0)
             i = 1;
         else
@@ -382,7 +515,7 @@ public class PlayerMovements : MonoBehaviour
         }
         Center.transform.position = Player.transform.position;
         CenterInside.transform.rotation = new Quaternion(0, 0, 0, 90);
-        isInputRestricted = true;
+        //isInputRestricted = true;
         if (i == 0)
             i = 1;
         else
@@ -398,7 +531,7 @@ public class PlayerMovements : MonoBehaviour
         }
         Center.transform.position = Player.transform.position;
         CenterInside.transform.rotation = new Quaternion(0, 0, 0, -90);
-        isInputRestricted = true;
+        //isInputRestricted = true;
         if (i == 0)
             i = 1;
         else
