@@ -6,12 +6,16 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instans;
+
     public PlayerMovements[] Players;
     public GameObject NextLevelPanel , RestartPanel;
     public int PlayerCubesInLevels;
     public int[] GameWinCounts = {0,0,0,0,0,0,0,0,0,0};
     public int CountsCubes;
-    public bool WinGame;
+    public bool WinGame , GameOver;
+    public ParticleSystem WinEffect;
+    bool WinEffectStart;
 
 
     [Header("----------test----------")]
@@ -19,6 +23,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        Instans = this;
+
         PlayerPrefs.DeleteKey("AmountOfYaxis");
         PlayerPrefs.DeleteKey("CollosonCounter");
 
@@ -35,6 +41,7 @@ public class GameManager : MonoBehaviour
 
         int LevelNumber = SceneManager.GetActiveScene().buildIndex + 1;
         LevelText.text = "Level"+ " " + LevelNumber;
+
     }
 
     // Update is called once per frame
@@ -56,12 +63,25 @@ public class GameManager : MonoBehaviour
         if(CountsCubes == PlayerCubesInLevels - 1)
         {
             WinGame = true;
-            NextLevelPanel.SetActive(true);
+            if(WinEffectStart == false)
+            {
+                WinEffect.Play();
+                WinEffectStart = true;
+            }
+            Invoke("PlayerWinLevel", 3f);
         }
 
         if(PlayerPrefs.GetInt("CollosonCounter") == PlayerCubesInLevels - 1)
         {
             if(WinGame == false)
+            {
+                RestartPanel.SetActive(true);
+            }
+        }
+
+        if(GameOver == true)
+        {
+            if (WinGame == false)
             {
                 RestartPanel.SetActive(true);
             }
@@ -76,5 +96,10 @@ public class GameManager : MonoBehaviour
     public void RestartButton()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void PlayerWinLevel()
+    {
+        NextLevelPanel.SetActive(true);
     }
 }

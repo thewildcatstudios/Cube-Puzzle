@@ -13,7 +13,8 @@ public class PlayerMovements : MonoBehaviour
     public Rigidbody NewCubePrefab;
     public PlayerTriggerControl UpSide, DownSide, LeftSide , RightSide;
     private bool UpMove, DownMove , LeftMove , RightMove ;
-
+    public Vector3 StartPostion;
+    bool UpStop , DownStop ,LeftStop, RightStop;
    
 
     [Header("----- Touch control ------")]
@@ -25,6 +26,7 @@ public class PlayerMovements : MonoBehaviour
     public float amountOfY;
     private float[] force = { 10, -10 };
     private int i = 0;
+    public PlayerMovements Player1, Player2;
 
 
 
@@ -78,15 +80,31 @@ public class PlayerMovements : MonoBehaviour
             }
         }
 
+        StartPostion = gameObject.transform.position;
+
     }
+
 
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Cube"))
         {
-            isInputRestricted = true;
-            if (isTouch == true)
+            //if(collision.gameObject.name == "New Cube(Clone)")
+            //{
+            //    if(gameObject.name == "New Cube(Clone)")
+            //    {
+            //        if (i == 0)
+            //            i = 1;
+            //        else
+            //            i = 0;
+            //    }
+            //}
+
+
+            if (isInputRestricted == false)
             {
+                isInputRestricted = true;
+
                 PlayerPrefs.SetInt("CollosonCounter", PlayerPrefs.GetInt("CollosonCounter") + 1);
                 Vector3 colliderSize = new Vector3(100, collision.gameObject.GetComponent<BoxCollider>().size.y + gameObject.GetComponent<BoxCollider>().size.y, 100);
 
@@ -96,32 +114,33 @@ public class PlayerMovements : MonoBehaviour
                 Destroy(gameObject.GetComponent<BoxCollider>());
                 Destroy(collision.gameObject.GetComponent<BoxCollider>());
 
+                position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2,StartPostion.y + collision.gameObject.GetComponent<PlayerMovements>().StartPostion.y , (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
 
-               // position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
+                //position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
 
 
-                if (gameObject.name == "New Cube(Clone)")
-                {
-                    position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2 + amountOfY, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
-                    PlayerPrefs.SetFloat("AmountOfYaxis", amountOfY + 5.5f);
-                }
-                else
-                {
-                    position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
+                //if (gameObject.name == "New Cube(Clone)")
+                //{
+                //    position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2 + amountOfY, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
+                //    PlayerPrefs.SetFloat("AmountOfYaxis", amountOfY + 5.5f);
+                //}
+                //else
+                //{
+                //    position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
 
-                }
+                //}
 
-                if (collision.gameObject.name == "New Cube(Clone)")
-                {
-                    position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2 - amountOfY, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
+                //if (collision.gameObject.name == "New Cube(Clone)")
+                //{
+                //    position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2 - amountOfY, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
 
-                }
+                //}
 
-                if (gameObject.name == "New Cube(Clone)" && collision.gameObject.name == collision.gameObject.name)
-                {
-                    position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
+                //if (gameObject.name == "New Cube(Clone)" && collision.gameObject.name == collision.gameObject.name)
+                //{
+                //    position = new Vector3((collision.gameObject.transform.position.x + gameObject.transform.position.x) / 2, (collision.gameObject.transform.position.y + gameObject.transform.position.y) / 2, (collision.gameObject.transform.position.z + gameObject.transform.position.z) / 2);
 
-                }
+                //}
 
                 Rigidbody clone = Instantiate(NewCubePrefab, position, Quaternion.identity);
 
@@ -138,58 +157,130 @@ public class PlayerMovements : MonoBehaviour
                     PlayerPrefs.SetInt("Cube(" + collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber + ")", 1);
                     clone.GetComponent<PlayerMovements>().CubesCountsNumber = CubesCountsNumber;
 
-                    for (int i = 0; i< PlayerPrefs.GetInt("NumberOfCubesInLevel"); i++)
+                    //for (int i = 0; i< PlayerPrefs.GetInt("NumberOfCubesInLevel"); i++)
+                    //{
+                    //    if(collision.gameObject.name == "Cube(" + i + ")")
+                    //    {
+                    //        if(i > CubesCountsNumber)
+                    //        {
+                    clone.GetComponent<PlayerMovements>().FirstNumber = FirstNumber;
+                    clone.GetComponent<PlayerMovements>().SecondNumber = SecondNumber;
+
+                    //        }
+                    //        else
+                    //        {
+                    //            clone.GetComponent<PlayerMovements>().FirstNumber = collision.gameObject.GetComponent<PlayerMovements>().FirstNumber;
+                    //            clone.GetComponent<PlayerMovements>().SecondNumber = SecondNumber;
+
+                    //        }
+                    //    }
+                    //}
+
+                    clone.GetComponent<PlayerMovements>().Player1 = this;
+                    clone.GetComponent<PlayerMovements>().Player2 = collision.gameObject.GetComponent<PlayerMovements>();
+                }
+                else
+                {
+                    if (collision.gameObject.name != "New Cube(Clone)")
                     {
-                        if(collision.gameObject.name == "Cube(" + i + ")")
-                        {
-                            if(i > CubesCountsNumber)
-                            {
-                                clone.GetComponent<PlayerMovements>().FirstNumber = FirstNumber;
-                                clone.GetComponent<PlayerMovements>().SecondNumber = collision.gameObject.GetComponent<PlayerMovements>().SecondNumber;
-
-                            }
-                            else
-                            {
-                                clone.GetComponent<PlayerMovements>().FirstNumber = collision.gameObject.GetComponent<PlayerMovements>().FirstNumber;
-                                clone.GetComponent<PlayerMovements>().SecondNumber = SecondNumber;
-
-                            }
-                        }
+                        GameManager.Instans.GameOver = true;
                     }
+
                 }
 
                 if (collision.gameObject.name == "New Cube(Clone)")
                 {
                     if(FirstNumber == collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber)
                     {
-                        PlayerPrefs.SetInt("Cube(" + collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber + ")", 1);
-                        clone.GetComponent<PlayerMovements>().CubesCountsNumber = CubesCountsNumber;
-                    }
-
-                    if (SecondNumber == collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber)
-                    {
-                        PlayerPrefs.SetInt("Cube(" + collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber + ")", 1);
-                        clone.GetComponent<PlayerMovements>().CubesCountsNumber = CubesCountsNumber;
-                    }
-
-                    for (int i = 0; i < PlayerPrefs.GetInt("NumberOfCubesInLevel"); i++)
-                    {
-                        if (i == collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber)
+                        if(PlayerPrefs.GetInt("Cube(" + collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber + ")") == 0)
                         {
-                            if (i > CubesCountsNumber)
-                            {
-                                clone.GetComponent<PlayerMovements>().FirstNumber = FirstNumber;
-                                clone.GetComponent<PlayerMovements>().SecondNumber = collision.gameObject.GetComponent<PlayerMovements>().SecondNumber;
+                            PlayerPrefs.SetInt("Cube(" + collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber + ")", 1);
+                            clone.GetComponent<PlayerMovements>().CubesCountsNumber = CubesCountsNumber;
+                        }
+                        else
+                        {
+                            PlayerPrefs.SetInt("Cube(" + CubesCountsNumber + ")", 1);
+                            clone.GetComponent<PlayerMovements>().CubesCountsNumber = CubesCountsNumber;
+                        }
 
-                            }
-                            else
-                            {
-                                clone.GetComponent<PlayerMovements>().FirstNumber = collision.gameObject.GetComponent<PlayerMovements>().FirstNumber;
-                                clone.GetComponent<PlayerMovements>().SecondNumber = SecondNumber;
-
-                            }
+                   
+                    }
+                    else if (SecondNumber == collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber)
+                    {
+                        if (PlayerPrefs.GetInt("Cube(" + collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber + ")") == 0)
+                        {
+                            PlayerPrefs.SetInt("Cube(" + collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber + ")", 1);
+                            clone.GetComponent<PlayerMovements>().CubesCountsNumber = CubesCountsNumber;
+                        }
+                        else
+                        {
+                            PlayerPrefs.SetInt("Cube(" + CubesCountsNumber + ")", 1);
+                            clone.GetComponent<PlayerMovements>().CubesCountsNumber = CubesCountsNumber;
                         }
                     }
+                    else
+                    {
+                        GameManager.Instans.GameOver = true;
+                    }
+
+                    clone.GetComponent<PlayerMovements>().FirstNumber = FirstNumber;
+                    clone.GetComponent<PlayerMovements>().SecondNumber = SecondNumber;
+
+                    if (collision.gameObject.name == "New Cube(Clone)")
+                    {
+                        if (i == 0)
+                        {
+                            clone.GetComponent<PlayerMovements>().Player2 = collision.gameObject.GetComponent<PlayerMovements>().Player2;
+                        }
+                        else
+                        {
+                            clone.GetComponent<PlayerMovements>().Player2 = collision.gameObject.GetComponent<PlayerMovements>().Player1;
+                        }
+                        clone.GetComponent<PlayerMovements>().Player1 = this;
+
+                    }
+                    else
+                    {
+                        if (i == 0)
+                        {
+                            clone.GetComponent<PlayerMovements>().Player2 = Player2;
+                        }
+                        else
+                        {
+                            clone.GetComponent<PlayerMovements>().Player2 = Player1;
+                        }
+                        clone.GetComponent<PlayerMovements>().Player1 = collision.gameObject.GetComponent<PlayerMovements>();
+                    }
+
+
+                    //if (i == 0)
+                    //{
+                    //    clone.GetComponent<PlayerMovements>().Player1 = Player1;
+                    //}
+                    //else
+                    //{
+                    //    clone.GetComponent<PlayerMovements>().Player1 = Player2;
+                    //}
+                    //clone.GetComponent<PlayerMovements>().Player2 = collision.gameObject.GetComponent<PlayerMovements>();
+
+                    //for (int i = 0; i < PlayerPrefs.GetInt("NumberOfCubesInLevel"); i++)
+                    //{
+                    //    if (i == collision.gameObject.GetComponent<PlayerMovements>().CubesCountsNumber)
+                    //    {
+                    //        if (i > CubesCountsNumber)
+                    //        {
+                    //            clone.GetComponent<PlayerMovements>().FirstNumber = FirstNumber;
+                    //            clone.GetComponent<PlayerMovements>().SecondNumber = collision.gameObject.GetComponent<PlayerMovements>().SecondNumber;
+
+                    //        }
+                    //        else
+                    //        {
+                    //            clone.GetComponent<PlayerMovements>().FirstNumber = collision.gameObject.GetComponent<PlayerMovements>().FirstNumber;
+                    //            clone.GetComponent<PlayerMovements>().SecondNumber = SecondNumber;
+
+                    //        }
+                    //    }
+                    //}
                 }
 
                 //if (collision.gameObject.name == "Cube(" + SecondNumber + ")")
@@ -202,17 +293,105 @@ public class PlayerMovements : MonoBehaviour
 
              
             }
+
+            if (i == 0)
+                i = 1;
+            else
+                i = 0;
         }
 
         if(collision.gameObject.CompareTag("Platfrom"))
         {
             isInputRestricted = true;
+
+            if (i == 0)
+                i = 1;
+            else
+                i = 0;
+        }
+    }
+
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.CompareTag("UpSider"))
+        {
+            UpStop = true;
+        }
+        if (other.gameObject.CompareTag("DownSider"))
+        {
+            DownStop = true;
+        }
+        if (other.gameObject.CompareTag("LeftSider"))
+        {
+            LeftStop = true;
+        }
+        if (other.gameObject.CompareTag("RightSider"))
+        {
+            RightStop = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("UpSider"))
+        {
+            UpStop = false;
+        }
+        if (other.gameObject.CompareTag("DownSider"))
+        {
+            DownStop = false;
+        }
+        if (other.gameObject.CompareTag("LeftSider"))
+        {
+            LeftStop = false;
+        }
+        if (other.gameObject.CompareTag("RightSider"))
+        {
+            RightStop = false;
         }
     }
 
     void Update()
     {
-       
+        if (gameObject.name == "New Cube(Clone)")
+        {
+            if (GameManager.Instans.GameOver == true)
+                return;
+
+            //if (isInputRestricted == true)
+            //{
+                if (i == 1)
+                {
+                    FirstNumber = Player2.FirstNumber;
+                    SecondNumber = Player2.SecondNumber;
+                    CubesCountsNumber = Player2.CubesCountsNumber;
+                }
+                else
+                {
+                    FirstNumber = Player1.FirstNumber;
+                    SecondNumber = Player1.SecondNumber;
+                    CubesCountsNumber = Player1.CubesCountsNumber;
+                }
+            //}
+            //else
+            //{
+            //    if (i == 1)
+            //    {
+            //        FirstNumber = Player2.FirstNumber;
+            //        SecondNumber = Player2.SecondNumber;
+            //        CubesCountsNumber = Player2.CubesCountsNumber;
+            //    }
+            //    else
+            //    {
+            //        FirstNumber = Player1.FirstNumber;
+            //        SecondNumber = Player1.SecondNumber;
+            //        CubesCountsNumber = Player1.CubesCountsNumber;
+            //    }
+            //}
+
+
+        }
         if (isInputRestricted == true)
         {
             if (isTouch == true)
@@ -239,8 +418,11 @@ public class PlayerMovements : MonoBehaviour
                     }
                     else
                     {
-                        StartCoroutine("RotationUp");
-                        isInputRestricted = false;
+                        if(UpStop  == false)
+                        {
+                            StartCoroutine("RotationUp");
+                            isInputRestricted = false;
+                        }
                     }
                    
                 }
@@ -253,8 +435,11 @@ public class PlayerMovements : MonoBehaviour
                     }
                     else
                     {
-                        StartCoroutine("RotationDown");
-                        isInputRestricted = false;
+                        if(DownStop == false)
+                        {
+                            StartCoroutine("RotationDown");
+                            isInputRestricted = false;
+                        }
                     }
                  
                 }
@@ -267,8 +452,11 @@ public class PlayerMovements : MonoBehaviour
                     }
                     else
                     {
-                        StartCoroutine("RotationRight");
-                        isInputRestricted = false;
+                        if(RightStop == false)
+                        {
+                            StartCoroutine("RotationRight");
+                            isInputRestricted = false;
+                        }
                     }
 
                     
@@ -282,8 +470,11 @@ public class PlayerMovements : MonoBehaviour
                     }
                     else
                     {
-                        StartCoroutine("RotationLeft");
-                        isInputRestricted = false;
+                        if(LeftStop == false)
+                        {
+                            StartCoroutine("RotationLeft");
+                            isInputRestricted = false;
+                        }
                     }
                     
                 }
@@ -481,10 +672,10 @@ public class PlayerMovements : MonoBehaviour
         CenterInside.transform.rotation = new Quaternion(0, 0, 0, -180);
         //isInputRestricted = true;
 
-        if (i == 0)
-            i = 1;
-        else
-            i = 0;
+        //if (i == 0)
+        //    i = 1;
+        //else
+        //    i = 0;
 
 
       
@@ -500,10 +691,10 @@ public class PlayerMovements : MonoBehaviour
         Center.transform.position = Player.transform.position;
         CenterInside.transform.rotation = new Quaternion(0, 0, 0 , 180);
         //isInputRestricted = true;
-        if (i == 0)
-            i = 1;
-        else
-            i = 0;
+        //if (i == 0)
+        //    i = 1;
+        //else
+        //    i = 0;
     }
 
     IEnumerator RotationLeft()
@@ -516,10 +707,10 @@ public class PlayerMovements : MonoBehaviour
         Center.transform.position = Player.transform.position;
         CenterInside.transform.rotation = new Quaternion(0, 0, 0, 90);
         //isInputRestricted = true;
-        if (i == 0)
-            i = 1;
-        else
-            i = 0;
+        //if (i == 0)
+        //    i = 1;
+        //else
+        //    i = 0;
     }
 
     IEnumerator RotationRight()
@@ -532,10 +723,10 @@ public class PlayerMovements : MonoBehaviour
         Center.transform.position = Player.transform.position;
         CenterInside.transform.rotation = new Quaternion(0, 0, 0, -90);
         //isInputRestricted = true;
-        if (i == 0)
-            i = 1;
-        else
-            i = 0;
+        //if (i == 0)
+        //    i = 1;
+        //else
+        //    i = 0;
     }
 
 
