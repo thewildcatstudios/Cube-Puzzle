@@ -105,7 +105,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7236330608200554692}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 40, z: 80}
+  m_LocalPosition: {x: 0, y: 34, z: 80}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7236330608497153696}
@@ -137,6 +137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerMove: 1
+  isTrigger: {fileID: 0}
 --- !u!1 &7236330608375222129
 GameObject:
   m_ObjectHideFlags: 0
@@ -182,7 +183,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7236330608375222129}
-  m_Mesh: {fileID: -7754318969949236687, guid: eec1cede8d50740678534650a26ffc54, type: 3}
+  m_Mesh: {fileID: -7754318969949236687, guid: c5c7913f20b494a19856f8d0a979c958, type: 3}
 --- !u!23 &7236330608375222133
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -270,6 +271,11 @@ MonoBehaviour:
   Down: {fileID: 0}
   left: {fileID: 0}
   Right: {fileID: 0}
+  CenterControl: {fileID: 0}
+  UpControl: {fileID: 0}
+  DownControl: {fileID: 0}
+  leftControl: {fileID: 0}
+  RightControl: {fileID: 0}
   speed: 0.05
   step: 90
   isInputRestricted: 1
@@ -280,18 +286,16 @@ MonoBehaviour:
   LeftSide: {fileID: 7236330608543007564}
   RightSide: {fileID: 7236330608764854027}
   StartPostion: {x: 0, y: 0, z: 0}
-  UpStop: 0
-  DownStop: 0
-  LeftStop: 0
-  RightStop: 0
   isTouch: 0
   amountOfY: 0
+  i: 0
   Player1: {fileID: 0}
   Player2: {fileID: 0}
   Players: []
   FirstNumber: 0
   SecondNumber: 0
   CubesCountsNumber: 0
+  MoveUpSideCube: 0
 --- !u!1 &7236330608497153711
 GameObject:
   m_ObjectHideFlags: 0
@@ -352,7 +356,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7236330608543007561}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -90, y: 40, z: 0}
+  m_LocalPosition: {x: -90, y: 34, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7236330608497153696}
@@ -384,6 +388,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerMove: 1
+  isTrigger: {fileID: 0}
 --- !u!1 &7236330608568549378
 GameObject:
   m_ObjectHideFlags: 0
@@ -410,7 +415,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7236330608568549378}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 40, z: -90}
+  m_LocalPosition: {x: 0, y: 34, z: -90}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7236330608497153696}
@@ -442,6 +447,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerMove: 1
+  isTrigger: {fileID: 0}
 --- !u!1 &7236330608764854026
 GameObject:
   m_ObjectHideFlags: 0
@@ -468,7 +474,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7236330608764854026}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 90, y: 40, z: 0}
+  m_LocalPosition: {x: 90, y: 34, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7236330608497153696}
@@ -500,6 +506,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerMove: 1
+  isTrigger: {fileID: 0}
 --- !u!1 &7236330609420004557
 GameObject:
   m_ObjectHideFlags: 0

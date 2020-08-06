@@ -1,31 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instans;
-
     public PlayerMovements[] Players;
-    public GameObject NextLevelPanel , RestartPanel;
     public int PlayerCubesInLevels;
     public int[] GameWinCounts = {0,0,0,0,0,0,0,0,0,0};
     public int CountsCubes;
     public bool WinGame , GameOver;
     public ParticleSystem WinEffect;
     bool WinEffectStart;
+    public int FPS;
 
-
-    [Header("----------test----------")]
-    public Text LevelText;
 
     void Start()
     {
         Instans = this;
 
-        PlayerPrefs.DeleteKey("AmountOfYaxis");
+        WinEffect = GameObject.Find("Win Effect").GetComponent<ParticleSystem>();
+
         PlayerPrefs.DeleteKey("CollosonCounter");
 
         Players = GameObject.FindObjectsOfType<PlayerMovements>();
@@ -39,14 +34,24 @@ public class GameManager : MonoBehaviour
 
         PlayerCubesInLevels = Players.Length;
 
-        int LevelNumber = SceneManager.GetActiveScene().buildIndex + 1;
-        LevelText.text = "Level"+ " " + LevelNumber;
 
+
+
+        QualitySettings.vSyncCount = 0;
+
+        FPS = 800;
     }
 
     // Update is called once per frame
     void Update()
     {
+
+       if(FPS != Application.targetFrameRate)
+        {
+            Application.targetFrameRate = FPS ;
+        }
+
+
         for (int Number = 0; Number < PlayerCubesInLevels; Number++)
         {
             if(PlayerPrefs.GetInt("Cube(" + Number + ")") == 1)
@@ -68,14 +73,14 @@ public class GameManager : MonoBehaviour
                 WinEffect.Play();
                 WinEffectStart = true;
             }
-            Invoke("PlayerWinLevel", 3f);
+            Invoke("PlayerWinLevel", 2f);
         }
 
         if(PlayerPrefs.GetInt("CollosonCounter") == PlayerCubesInLevels - 1)
         {
             if(WinGame == false)
             {
-                RestartPanel.SetActive(true);
+               UiManager.instance.RestartPanel.SetActive(true);
             }
         }
 
@@ -83,23 +88,13 @@ public class GameManager : MonoBehaviour
         {
             if (WinGame == false)
             {
-                RestartPanel.SetActive(true);
+                UiManager.instance.RestartPanel.SetActive(true);
             }
         }
     }
 
-    public void NextButton()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-    }
-
-    public void RestartButton()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
     public void PlayerWinLevel()
     {
-        NextLevelPanel.SetActive(true);
+        UiManager.instance.NextLevelPanel.SetActive(true);
     }
 }

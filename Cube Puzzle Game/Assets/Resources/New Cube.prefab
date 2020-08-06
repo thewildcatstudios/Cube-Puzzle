@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 889675896019149546}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -90, y: 35, z: 0}
+  m_LocalPosition: {x: -90, y: 50, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3683067243994676847}
@@ -58,6 +58,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerMove: 1
+  isTrigger: {fileID: 0}
+  prefab: {fileID: 6379496983423271308}
+  MovementUpSide: 1
 --- !u!1 &3511759855988349489
 GameObject:
   m_ObjectHideFlags: 0
@@ -84,7 +87,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3511759855988349489}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 35, z: 80}
+  m_LocalPosition: {x: 0, y: 50, z: 80}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3683067243994676847}
@@ -116,6 +119,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerMove: 1
+  isTrigger: {fileID: 0}
+  prefab: {fileID: 6379496983423271308}
+  MovementUpSide: 1
 --- !u!1 &4879454001604129834
 GameObject:
   m_ObjectHideFlags: 0
@@ -142,7 +148,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4879454001604129834}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 35, z: -90}
+  m_LocalPosition: {x: 0, y: 50, z: -90}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3683067243994676847}
@@ -174,6 +180,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerMove: 1
+  isTrigger: {fileID: 0}
+  prefab: {fileID: 6379496983423271308}
+  MovementUpSide: 1
 --- !u!1 &6379496983423271308
 GameObject:
   m_ObjectHideFlags: 0
@@ -202,7 +211,7 @@ Transform:
   m_GameObject: {fileID: 6379496983423271308}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 0.5, z: 1}
   m_Children:
   - {fileID: 3683067243994676847}
   m_Father: {fileID: 0}
@@ -235,7 +244,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 32
   m_CollisionDetection: 0
 --- !u!114 &6379496983423271312
 MonoBehaviour:
@@ -256,6 +265,11 @@ MonoBehaviour:
   Down: {fileID: 0}
   left: {fileID: 0}
   Right: {fileID: 0}
+  CenterControl: {fileID: 0}
+  UpControl: {fileID: 0}
+  DownControl: {fileID: 0}
+  leftControl: {fileID: 0}
+  RightControl: {fileID: 0}
   speed: 0.05
   step: 90
   isInputRestricted: 1
@@ -264,12 +278,17 @@ MonoBehaviour:
   DownSide: {fileID: 1453246841054322569}
   LeftSide: {fileID: 7968148673132318847}
   RightSide: {fileID: 6603962295453775785}
+  StartPostion: {x: 0, y: 0, z: 0}
   isTouch: 0
   amountOfY: 0
+  i: 0
+  Player1: {fileID: 0}
+  Player2: {fileID: 0}
   Players: []
   FirstNumber: 0
   SecondNumber: 0
   CubesCountsNumber: 0
+  MoveUpSideCube: 0
 --- !u!1 &8537006593235836690
 GameObject:
   m_ObjectHideFlags: 0
@@ -294,7 +313,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8537006593235836690}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 8}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8426316041475002300}
@@ -330,7 +349,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8825888642572447591}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 90, y: 35, z: 0}
+  m_LocalPosition: {x: 90, y: 50, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3683067243994676847}
@@ -362,3 +381,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerMove: 1
+  isTrigger: {fileID: 0}
+  prefab: {fileID: 6379496983423271308}
+  MovementUpSide: 1
